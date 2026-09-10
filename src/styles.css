@@ -1,0 +1,210 @@
+:root {
+  font-family: "JetBrainsMono Nerd Font", "JetBrainsMono Nerd Font Mono", "JetBrains Mono Nerd Font", "Symbols Nerd Font Mono", "JetBrains Mono", ui-monospace, monospace;
+  color: #e8eaf0;
+  background: #111318;
+  font-synthesis: none;
+}
+* { box-sizing: border-box; }
+body { margin: 0; min-width: 760px; min-height: 100vh; background: #111318; }
+button, input { font: inherit; }
+.nf-icon { font-family: "JetBrainsMono Nerd Font", "JetBrainsMono Nerd Font Mono", "JetBrains Mono Nerd Font", "Symbols Nerd Font Mono", "JetBrains Mono", monospace; font-style: normal; line-height: 1; }
+.app-shell { min-height: 100vh; padding: 20px; }
+.topbar { display: flex; justify-content: space-between; align-items: center; gap: 18px; margin-bottom: 18px; }
+h1 { margin: 0; font-size: 24px; }
+.path { margin-top: 5px; color: #8f97a8; font-size: 12px; max-width: 700px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.toolbar { display: flex; gap: 8px; }
+.toolbar button, .inline-add, .delete-category {
+  border: 1px solid #343a46;
+  background: #20242c;
+  color: #e9edf5;
+  border-radius: 8px;
+  padding: 8px 11px;
+  cursor: pointer;
+}
+.toolbar button { display: inline-flex; align-items: center; gap: 7px; }
+.toolbar button:hover, .inline-add:hover { background: #292e38; }
+.tree-panel { background: #171a20; border: 1px solid #2a2f39; border-radius: 12px; padding: 10px; min-height: 520px; }
+.category-row, .mod-row { min-height: 54px; display: flex; align-items: center; gap: 9px; border-radius: 9px; padding: 7px 10px; }
+.category-row {
+  min-height: 42px;
+  color: #f1f3f7;
+  position: relative;
+  transition: background .12s ease, box-shadow .12s ease;
+}
+.category-row.has-category-color {
+  background: color-mix(in srgb, var(--category-color) 23%, #171a20);
+  box-shadow: inset 3px 0 0 color-mix(in srgb, var(--category-color) 72%, white 0%);
+}
+.category-row:hover { background: #20242c; }
+.category-row.has-category-color:hover { background: color-mix(in srgb, var(--category-color) 31%, #20242c); }
+.mod-row:hover { background: #20242c; }
+.category-row.inside-over { outline: 1px solid #7e8aa5; background: #252a34; }
+.category-row.has-category-color.inside-over { background: color-mix(in srgb, var(--category-color) 36%, #252a34); }
+.category-name { font-weight: 650; }
+.category-count { margin-left: auto; color: #9ba3b3; font-size: 12px; }
+.icon-button { border: 0; background: transparent; color: #858da0; cursor: pointer; padding: 4px 6px; border-radius: 6px; display: inline-grid; place-items: center; }
+.icon-button:hover { background: rgba(255,255,255,.07); color: #e9edf5; }
+.drag-handle { cursor: grab; }
+.folder { color: #d5dae5; min-width: 18px; text-align: center; }
+.inline-add { margin-left: 5px; padding: 5px 7px; }
+.delete-category { padding: 5px 7px; color: #c98d96; border-color: transparent; background: transparent; }
+.delete-category:hover { color: #ffc1c9; background: #49252c; }
+.mod-row { border: 1px solid transparent; }
+.mod-row.disabled { opacity: .55; }
+.mod-row.dragging, .category-row.dragging { opacity: .42; }
+.mod-icon { width: 38px; height: 38px; flex: 0 0 38px; border-radius: 7px; overflow: hidden; background: #292e38; display: grid; place-items: center; }
+.mod-icon img { width: 100%; height: 100%; object-fit: contain; }
+.mod-main { min-width: 0; flex: 1; }
+.mod-title { font-weight: 650; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.mod-meta { display: flex; gap: 8px; align-items: center; margin-top: 4px; color: #8f97a8; font-size: 11px; }
+.mod-id { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.loader { padding: 2px 6px; border-radius: 999px; background: #292e38; color: #c6ccd8; }
+.drop-zone { height: 4px; margin: 0 10px; border-radius: 999px; transition: .1s; }
+.drop-zone.is-over { height: 8px; background: #717c95; }
+.root-drop { height: 22px; border: 1px dashed #303642; margin-bottom: 4px; }
+.root-drop.is-over { height: 28px; background: #242a34; }
+.switch { position: relative; width: 42px; height: 23px; flex: 0 0 auto; }
+.switch input { opacity: 0; width: 0; height: 0; }
+.slider { position: absolute; inset: 0; background: #353b46; border-radius: 999px; cursor: pointer; transition: .15s; }
+.slider::before { content: ""; position: absolute; width: 17px; height: 17px; left: 3px; top: 3px; background: #dfe3ea; border-radius: 50%; transition: .15s; }
+.switch input:checked + .slider { background: #66748f; }
+.switch input:checked + .slider::before { transform: translateX(19px); }
+.error { margin-bottom: 12px; padding: 10px 12px; border: 1px solid #7d3f48; background: #2d1b20; border-radius: 8px; color: #f2b5bd; }
+.empty-state { display: flex; flex-direction: column; gap: 5px; align-items: center; justify-content: center; min-height: 380px; color: #8f97a8; }
+.empty-state strong { color: #d8dce5; }
+.context-menu {
+  position: fixed;
+  z-index: 10000;
+  min-width: 244px;
+  padding: 6px;
+  border: 1px solid #343a46;
+  border-radius: 10px;
+  background: #1c2027;
+  box-shadow: 0 14px 35px rgba(0, 0, 0, .42);
+}
+.context-menu button {
+  width: 100%;
+  border: 0;
+  background: transparent;
+  color: #e8eaf0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 10px;
+  border-radius: 7px;
+  text-align: left;
+  cursor: pointer;
+}
+.context-menu button:hover { background: #292e38; }
+.context-menu .nf-icon { width: 18px; color: #bfc6d3; text-align: center; }
+
+/* Category color also applies to mods placed inside the category. */
+.mod-row.has-category-color {
+  background: color-mix(in srgb, var(--category-color) 14%, #171a20);
+  border-color: color-mix(in srgb, var(--category-color) 22%, transparent);
+  box-shadow: inset 2px 0 0 color-mix(in srgb, var(--category-color) 58%, transparent);
+}
+.mod-row.has-category-color:hover {
+  background: color-mix(in srgb, var(--category-color) 23%, #20242c);
+}
+
+.packaged-mods-control {
+  position: relative;
+  width: 30px;
+  height: 30px;
+  flex: 0 0 30px;
+  display: grid;
+  place-items: center;
+  border-radius: 7px;
+  color: #9ba4b7;
+  outline: none;
+}
+.packaged-mods-control:hover,
+.packaged-mods-control:focus-visible {
+  background: rgba(255, 255, 255, .07);
+  color: #edf1f8;
+}
+.packaged-mods-icon {
+  font-size: 16px;
+  pointer-events: none;
+}
+.packaged-mods-tooltip {
+  position: absolute;
+  z-index: 12000;
+  right: 0;
+  bottom: calc(100% + 8px);
+  width: min(360px, 70vw);
+  max-height: 340px;
+  overflow: hidden;
+  padding: 10px;
+  border: 1px solid #3a414f;
+  border-radius: 10px;
+  background: #191d24;
+  box-shadow: 0 14px 35px rgba(0, 0, 0, .48);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(4px);
+  transition: opacity .1s ease, transform .1s ease, visibility .1s ease;
+  pointer-events: none;
+}
+.packaged-mods-control:hover .packaged-mods-tooltip,
+.packaged-mods-control:focus-within .packaged-mods-tooltip {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+.packaged-mods-title {
+  font-weight: 700;
+  color: #f0f3f8;
+}
+.packaged-mods-file {
+  margin-top: 2px;
+  margin-bottom: 8px;
+  color: #7f889b;
+  font-size: 10px;
+  overflow-wrap: anywhere;
+}
+.packaged-mods-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  max-height: 260px;
+  overflow-y: auto;
+  padding-right: 4px;
+  scrollbar-width: thin;
+  scrollbar-color: #525b6c #20242c;
+}
+.packaged-mods-list::-webkit-scrollbar {
+  width: 8px;
+}
+.packaged-mods-list::-webkit-scrollbar-track {
+  background: #20242c;
+  border-radius: 999px;
+}
+.packaged-mods-list::-webkit-scrollbar-thumb {
+  background: #525b6c;
+  border: 2px solid #20242c;
+  border-radius: 999px;
+}
+.packaged-mods-list::-webkit-scrollbar-thumb:hover {
+  background: #687286;
+}
+.packaged-mod-item {
+  padding: 7px 8px;
+  border-radius: 7px;
+  background: #232831;
+}
+.packaged-mod-name {
+  font-size: 12px;
+  font-weight: 650;
+  color: #e3e7ef;
+}
+.packaged-mod-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px 9px;
+  margin-top: 3px;
+  color: #939cad;
+  font-size: 10px;
+}
